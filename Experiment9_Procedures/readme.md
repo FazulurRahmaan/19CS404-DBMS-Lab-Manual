@@ -1,126 +1,216 @@
-# Experiment 9: PL/SQL – Procedures and Functions
+# Experiment 7: PL/SQL – Variables, Control Structures and Loops
 
 ## AIM
-To understand and implement procedures and functions in PL/SQL for performing various operations such as calculations, decision-making, and looping.
+To write and execute simple PL/SQL programs using variables, loops, and conditional statements.
 
----
 
 ## THEORY
 
-PL/SQL (Procedural Language/SQL) extends SQL by adding procedural constructs like variables, conditions, loops, procedures, and functions. Procedures and functions are subprograms that help modularize the code and improve reusability.
-
-### **Procedure**
-A PL/SQL **procedure** is a subprogram that performs a specific action. It does not return a value directly but can return values using `OUT` parameters.
+PL/SQL, which stands for Procedural Language extensions to the Structured Query Language (SQL). It is a combination of SQL along with the procedural features of programming languages.
 
 **Syntax:**
 ```sql
-CREATE OR REPLACE PROCEDURE procedure_name (parameters)
-IS
-BEGIN
-   -- statements
+DECLARE 
+   <declarations section> 
+BEGIN 
+   <executable command(s)>
+EXCEPTION 
+   <exception handling> 
 END;
 ```
 
-To call the procedure
+### Basic Components of PL/SQL Block:
+- DECLARE: Section to declare variables and constants.
+- BEGIN: The execution section that contains PL/SQL statements.
+- EXCEPTION: Handles errors or exceptions that occur in the program.
+- END: Marks the end of the PL/SQL block.
 
-```sql
-EXEC procedure_name(arguments);
+# PL/SQL Programs – Steps and Expected Output
+
+## 1. Write a PL/SQL program to find the Greatest of Two Numbers
+
+### Steps:
+- Declare two numeric variables and initialize them.
+- Use an `IF` statement to compare the values.
+- Display the greater number using `DBMS_OUTPUT.PUT_LINE`.
+
+**Expected Output:**  
+Greater number is: 80
+
+### Program
 ```
-
-### **Function**
-A PL/SQL **function** is a subprogram that returns a single value using the RETURN keyword.
-
-```sql
-CREATE OR REPLACE FUNCTION function_name (parameters)
-RETURN datatype
-IS
+DECLARE
+    num1 NUMBER := 80;  -- First number
+    num2 NUMBER := 50;  -- Second number
 BEGIN
-   -- statements
-   RETURN value;
+    IF num1 > num2 THEN
+        DBMS_OUTPUT.PUT_LINE('Greater number is: ' || num1);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Greater number is: ' || num2);
+    END IF;
+END;
+```
+### Output
+
+<img width="502" height="351" alt="image" src="https://github.com/user-attachments/assets/e235e444-6f64-4280-9cc9-9445d94f275d" />
+
+---
+
+## 2. Write a PL/SQL program to Calculate Sum of First N Natural Numbers
+
+### Steps:
+- Declare a variable `n` and assign a value (e.g., 10).
+- Initialize a `sum` variable to 0.
+- Use a `WHILE` loop to iterate from 1 to `n`, adding each number to the sum.
+- Display the result using `DBMS_OUTPUT.PUT_LINE`.
+
+**Expected Output:**  
+Sum of first 10 natural numbers is: 55
+### Program
+```
+SET SERVEROUTPUT ON;
+
+DECLARE
+    n NUMBER := 10;       -- Number up to which sum is calculated
+    i NUMBER := 1;        -- Loop counter
+    total_sum NUMBER := 0; -- To store the sum
+BEGIN
+    WHILE i <= n LOOP
+        total_sum := total_sum + i;
+        i := i + 1;
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('Sum of first ' || n || ' natural numbers is: ' || total_sum);
+END;
+```
+### output
+
+<img width="796" height="340" alt="image" src="https://github.com/user-attachments/assets/aeb7b71c-f10f-456e-9bda-b28b8f7844df" />
+
+---
+
+## 3. Write a PL/SQL program to generate Fibonacci series
+
+### Steps:
+- Declare the variable `n` to indicate how many terms to generate.
+- Initialize the first two Fibonacci numbers (0 and 1).
+- Use a loop to generate the next terms using the formula `c = a + b`.
+- Print each term in the series.
+
+**Expected Output:**  
+n = 7  
+Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8
+
+### Program
+
+```
+SET SERVEROUTPUT ON;
+
+DECLARE
+    n NUMBER := 7;     -- Number of terms in the series
+    a NUMBER := 0;     -- First term
+    b NUMBER := 1;     -- Second term
+    c NUMBER;          -- Next term
+    i NUMBER := 3;     -- Counter starting from 3 since first two terms are already known
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Fibonacci sequence:');
+    DBMS_OUTPUT.PUT_LINE(a);
+    DBMS_OUTPUT.PUT_LINE(b);
+
+    WHILE i <= n LOOP
+        c := a + b;
+        DBMS_OUTPUT.PUT_LINE(c);
+        a := b;
+        b := c;
+        i := i + 1;
+    END LOOP;
 END;
 ```
 
-To call the function:
+### Output
 
-```sql
-SELECT function_name(arguments) FROM DUAL;
+<img width="587" height="316" alt="image" src="https://github.com/user-attachments/assets/26e6b3fb-9a6e-4d8b-aaea-528a15e6a926" />
+
+---
+
+## 4. Write a PL/SQL Program to display the number in Reverse Order
+
+### Steps:
+- Declare a variable `n` and assign a value (e.g., 1535).
+- Use a loop to extract each digit using modulo and reverse the number.
+- Display the reversed number.
+
+**Expected Output:**  
+n = 1535  
+Reversed number is 5351
+
+### Program
+```
+SET SERVEROUTPUT ON;
+
+DECLARE
+    n NUMBER := 1535;       -- Original number
+    original NUMBER := 1535;-- To keep the original number for display
+    reversed NUMBER := 0;   -- To store the reversed number
+    digit NUMBER;           -- To extract each digit
+BEGIN
+    WHILE n > 0 LOOP
+        digit := MOD(n, 10);              -- Get the last digit
+        reversed := reversed * 10 + digit;-- Build the reversed number
+        n := TRUNC(n / 10);               -- Remove the last digit
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('n = ' || original);
+    DBMS_OUTPUT.PUT_LINE('Reversed number is ' || reversed);
+END;
 ```
 
-Key Differences:
+### Output
 
--A procedure does not return a value, whereas a function must return a value.
--Functions can be called from SQL queries, procedures cannot (in most cases).
-
-## 1. Write a PL/SQL Procedure to Find the Square of a Number
-
-### Steps:
-- Create a procedure named `find_square`.
-- Declare a parameter to accept a number.
-- Inside the procedure, compute the square of the input number.
-- Use `DBMS_OUTPUT.PUT_LINE` to display the result.
-- Call the procedure with a number as input.
-
-**Expected Output:**  
-Square of 6 is 36
+<img width="798" height="288" alt="image" src="https://github.com/user-attachments/assets/5c261cf5-0b6e-4cbc-942e-61c0e6e990dd" />
 
 ---
 
-## 2. Write a PL/SQL Function to Return the Factorial of a Number
+## 5. Write a PL/SQL program to find the largest of three numbers
 
 ### Steps:
-- Create a function named `get_factorial`.
-- Declare a parameter to accept a number.
-- Use a loop to calculate the factorial.
-- Return the result using the `RETURN` statement.
-- Call the function using a `SELECT` statement or in an anonymous block.
+- Declare three numeric variables `a`, `b`, and `c`.
+- Use nested `IF-ELSIF-ELSE` conditions to find the largest among the three.
+- Display the largest number.
 
 **Expected Output:**  
-Factorial of 5 is 120
+a = 10, b = 9, c = 15  
+Largest of three number is 15
 
----
+### Program
+```
+SET SERVEROUTPUT ON;
 
-## 3. Write a PL/SQL Procedure to Check Whether a Number is Even or Odd
+DECLARE
+    a NUMBER := 10;
+    b NUMBER := 9;
+    c NUMBER := 15;
+    largest NUMBER;
+BEGIN
+    IF a >= b AND a >= c THEN
+        largest := a;
+    ELSIF b >= a AND b >= c THEN
+        largest := b;
+    ELSE
+        largest := c;
+    END IF;
 
-### Steps:
-- Create a procedure named `check_even_odd`.
-- Accept an input parameter.
-- Use the `MOD` function to check if the number is divisible by 2.
-- Display whether it is Even or Odd using `DBMS_OUTPUT.PUT_LINE`.
+    DBMS_OUTPUT.PUT_LINE('a = ' || a || ', b = ' || b || ', c = ' || c);
+    DBMS_OUTPUT.PUT_LINE('Largest of three number is ' || largest);
+END;
+```
 
-**Expected Output:**  
-12 is Even
+### Output
 
----
-
-## 4. Write a PL/SQL Function to Return the Reverse of a Number
-
-### Steps:
-- Create a function named `reverse_number`.
-- Accept an input number as parameter.
-- Use a loop to reverse the digits of the number.
-- Return the reversed number.
-- Call the function and display the output.
-
-**Expected Output:**  
-Reversed number of 1234 is 4321
-
----
-
-## 5. Write a PL/SQL Procedure to Display the Multiplication Table of a Number
-
-### Steps:
-- Create a procedure named `print_table`.
-- Accept an input number.
-- Use a loop from 1 to 10 to multiply the input number.
-- Display the multiplication results using `DBMS_OUTPUT.PUT_LINE`.
-
-**Expected Output:**  
-Multiplication table of 5:  
-5 x 1 = 5  
-5 x 2 = 10  
-5 x 3 = 15  
-...  
-5 x 10 = 50
+<img width="706" height="353" alt="image" src="https://github.com/user-attachments/assets/1fb14167-c86f-4d9d-b99e-175687eae6aa" />
 
 ## RESULT
-Thus, the PL/SQL programs using procedures and functions were written, compiled, and executed successfully.
+Thus, the PL/SQL programs using variables, conditionals, and loops were executed successfully.
+
+
+
